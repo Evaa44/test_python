@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f4ec">
+    <title>Météo locale</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="topbar">
+        <a class="wordmark" href="{{ url_for('index') }}" aria-label="Météo locale, accueil">
+          <span class="wordmark-icon" aria-hidden="true">☼</span>
+          <span>MÉTÉO <b>LOCALE</b></span>
+        </a>
+        <span class="live-label"><span class="live-dot"></span> DONNÉES EN DIRECT</span>
+      </header>
+
+      <section class="search-section" aria-labelledby="page-title">
+        <div class="search-copy">
+          <p class="eyebrow">LE CIEL, SANS DÉTOUR</p>
+          <h1 id="page-title">Quel temps<br>fait-il <em>ailleurs&nbsp;?</em></h1>
+        </div>
+        <form class="search-form" method="post" action="{{ url_for('index') }}">
+          <label for="city">Votre ville</label>
+          <div class="search-control">
+            <span class="pin-icon" aria-hidden="true">⌖</span>
+            <input id="city" name="city" type="search" placeholder="Ex. Montréal, Lyon…" value="{{ city }}" required autocomplete="address-level2">
+            <button type="submit" aria-label="Rechercher la météo">Voir <span aria-hidden="true">↗</span></button>
+          </div>
+        </form>
+      </section>
+
+      {% if error %}
+        <p class="error-message" role="alert">{{ error }}</p>
+      {% endif %}
+
+      {% if weather %}
+        <section class="weather-panel" aria-label="Météo à {{ weather.name }}" aria-live="polite">
+          <div class="weather-main">
+            <p class="eyebrow panel-eyebrow">MAINTENANT <span>·</span> {{ weather.region or weather.country }}</p>
+            <h2>{{ weather.name }}</h2>
+            <p class="condition">{{ weather.description }}</p>
+            <div class="temperature-line">
+              <span class="weather-icon" role="img" aria-label="{{ weather.description }}">{{ weather.icon }}</span>
+              <span class="temperature">{{ weather.temperature }}<sup>°</sup></span>
+            </div>
+            <p class="high-low">Maximum {{ weather.high }}° <span>·</span> Minimum {{ weather.low }}°</p>
+          </div>
+          <div class="weather-details">
+            <p class="detail-heading">EN UN COUP D’ŒIL</p>
+            <div class="detail-row">
+              <span class="detail-icon" aria-hidden="true">⌁</span>
+              <span class="detail-name">Ressenti</span>
+              <strong>{{ weather.feels_like }}°</strong>
+            </div>
+            <div class="detail-row">
+              <span class="detail-icon" aria-hidden="true">◌</span>
+              <span class="detail-name">Humidité</span>
+              <strong>{{ weather.humidity }}%</strong>
+            </div>
+            <div class="detail-row">
+              <span class="detail-icon" aria-hidden="true">≋</span>
+              <span class="detail-name">Vent</span>
+              <strong>{{ weather.wind }} <small>km/h</small></strong>
+            </div>
+            <p class="location-name">{{ weather.name }}{% if weather.country %}, {{ weather.country }}{% endif %}</p>
+          </div>
+        </section>
+      {% else %}
+        <section class="empty-sky" aria-label="Météo">
+          <div class="sun-mark" aria-hidden="true">☼</div>
+          <p>Une fenêtre sur le ciel.</p>
+        </section>
+      {% endif %}
+
+      <footer class="footer">
+        <span>La météo du moment, partout.</span>
+        <span>Propulsé par Open-Meteo</span>
+      </footer>
+    </main>
+  </body>
+</html>
